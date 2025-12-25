@@ -1,32 +1,16 @@
-# TODO: Fix Login and Admin Dashboard Issues
+# E-Commerce Features Implementation
 
-## Login Page Fixes
+## Completed Tasks
 
-- [x] Add comprehensive CSS styles for login page UI
-- [x] Ensure proper responsive design
-- [x] Test login functionality with demo/admin credentials
+- [x] Update CartContext.jsx: Modify addToCart to check if product.stock > 0 before adding, else show alert.
+- [x] Update AdminDashboard.jsx: Add min="0" to price and stock inputs, and validate in handleUpdateProduct.
+- [x] Update Products.jsx: Implement pagination (e.g., 12 products per page) with page controls.
+- [x] Update productRoutes.js: Add pagination support with page and limit query params.
+- [x] Ensure ProductCard.jsx correctly displays out-of-stock status.
 
-## API Service Enhancements
+## Followup Steps
 
-- [x] Add deleteProduct function
-- [x] Add updateProduct function
-- [x] Add getAdminOrders function
-
-## Admin Dashboard Enhancements
-
-- [x] Add delete product functionality
-- [x] Add edit/update product functionality
-- [x] Fix orders fetching to use API service
-- [x] Improve orders display with proper data
-- [x] Enhance overall admin dashboard UI
-
-## Testing
-
-- [x] Test admin login and dashboard access
-- [x] Test product add/delete/edit operations
-- [x] Test orders viewing functionality
-
-## Servers Status
-
-- [x] Backend server running on port 5000
-- [x] Frontend server running on port 5179
+- [x] Test add to cart with stock 0.
+- [x] Test admin edit with negative values.
+- [x] Test pagination on products page.
+- [x] Verify out-of-stock display.

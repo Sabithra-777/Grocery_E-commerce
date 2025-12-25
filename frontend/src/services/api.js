@@ -19,7 +19,14 @@ api.interceptors.request.use((config) => {
 // Products API
 export const getProducts = async (params = {}) => {
   try {
+    console.log("API_BASE_URL:", API_BASE_URL);
+    const fullUrl = `${API_BASE_URL}/products`;
+    console.log("Full URL:", fullUrl);
+    console.log("Params:", params);
     const response = await api.get("/products", { params });
+    console.log("Response status:", response.status);
+    console.log("Raw API response:", response.data);
+    // Return the full response data (products array and pagination)
     return response.data;
   } catch (error) {
     console.error("Error fetching products:", error);

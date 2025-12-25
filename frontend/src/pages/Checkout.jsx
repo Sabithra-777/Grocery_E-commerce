@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
@@ -8,6 +8,13 @@ const Checkout = () => {
   const { cartItems, getCartTotal, clearCart } = useContext(CartContext);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!user) {
+      navigate("/login", { state: { from: "/checkout" } });
+    }
+  }, [user, navigate]);
 
   const [formData, setFormData] = useState({
     fullName: user?.name || "",
@@ -99,7 +106,13 @@ const Checkout = () => {
       navigate("/orders", { state: { orderSuccess: true } });
     } catch (error) {
       console.error("Error creating order:", error);
-      alert("Failed to place order. Please try again.");
+      if (error.response?.status === 401 || error.response?.status === 400) {
+        // Authentication error - redirect to login
+        alert("Your session has expired. Please login again.");
+        navigate("/login", { state: { from: "/checkout" } });
+      } else {
+        alert("Failed to place order. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

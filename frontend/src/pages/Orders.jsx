@@ -14,7 +14,18 @@ const Orders = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const orderSuccess = location.state?.orderSuccess;
+  const [orderSuccess, setOrderSuccess] = useState(
+    location.state?.orderSuccess
+  );
+
+  // Clear the success state after showing it once
+  useEffect(() => {
+    if (orderSuccess) {
+      // Clear the state from location to prevent showing again
+      window.history.replaceState({}, document.title);
+      setOrderSuccess(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (user) fetchOrders();
@@ -47,6 +58,7 @@ const Orders = () => {
         price: product.price,
         offerPrice: product.offerPrice,
         image: product.image,
+        quantity: item.quantity,
       });
     });
     navigate("/cart");

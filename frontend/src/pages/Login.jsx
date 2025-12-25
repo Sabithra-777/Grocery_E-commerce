@@ -65,7 +65,7 @@ const Login = () => {
           <div className="login-header">
             <Link to="/" className="brand-link">
               <span className="brand-icon">🛒</span>
-              FreshMart Groceries
+              GroceryMart
             </Link>
             <h1>{isLogin ? "Welcome Back!" : "Create Account"}</h1>
             <p>{isLogin ? "Sign in to continue" : "Join us today"}</p>

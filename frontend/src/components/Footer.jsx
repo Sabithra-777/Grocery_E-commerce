@@ -12,7 +12,7 @@ const Footer = () => {
             </div>
             <p>
               Your trusted partner for fresh, organic groceries delivered right
-              to your doorstep. Quality guaranteed, satisfaction assured.
+              to your doorstep.
             </p>
           </div>
 
@@ -26,13 +26,7 @@ const Footer = () => {
                 <Link to="/products">Products</Link>
               </li>
               <li>
-                <Link to="/products?category=vegetables">Vegetables</Link>
-              </li>
-              <li>
-                <Link to="/products?category=dairy">Dairy Products</Link>
-              </li>
-              <li>
-                <Link to="/products?category=fruits">Fruits</Link>
+                <Link to="/about">About</Link>
               </li>
             </ul>
           </div>
@@ -42,12 +36,6 @@ const Footer = () => {
             <ul>
               <li>
                 <span>Help Center</span>
-              </li>
-              <li>
-                <span>Returns & Refunds</span>
-              </li>
-              <li>
-                <span>Shipping Info</span>
               </li>
               <li>
                 <span>Contact Us</span>
@@ -62,55 +50,12 @@ const Footer = () => {
             <h4>Contact Info</h4>
             <div className="contact-info">
               <div className="contact-item">
-                <span className="contact-icon">📍</span>
-                <p>123 Fresh Street, Green City, GC 12345</p>
-              </div>
-              <div className="contact-item">
                 <span className="contact-icon">📞</span>
                 <p>+91 98765 43210</p>
               </div>
               <div className="contact-item">
                 <span className="contact-icon">✉️</span>
                 <p>support@grocerymart.com</p>
-              </div>
-              <div className="contact-item">
-                <span className="contact-icon">🕒</span>
-                <p>Mon-Sun: 6:00 AM - 11:00 PM</p>
-              </div>
-            </div>
-          </div>
-          <div className="footer-section">
-            <h4>Newsletter</h4>
-            <p>Subscribe to get updates on new products and offers!</p>
-            <div className="newsletter-form">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="newsletter-input"
-                id="newsletter-email"
-              />
-              <button
-                className="newsletter-btn"
-                type="button"
-                onClick={() => {
-                  const email =
-                    document.getElementById("newsletter-email").value;
-                  if (email) {
-                    alert("Thank you for subscribing!");
-                    document.getElementById("newsletter-email").value = "";
-                  } else {
-                    alert("Please enter your email");
-                  }
-                }}
-              >
-                Subscribe
-              </button>
-            </div>
-            <div className="app-download">
-              <p>Download our app:</p>
-              <div className="app-links">
-                <span className="app-link">📱 iOS</span>
-                <span className="app-link">🤖 Android</span>
               </div>
             </div>
           </div>
@@ -119,11 +64,6 @@ const Footer = () => {
         <div className="footer-bottom">
           <div className="footer-bottom-content">
             <p>&copy; 2025 GroceryMart Groceries. All rights reserved.</p>
-            <div className="footer-links">
-              <span>Privacy Policy</span>
-              <span>Terms of Service</span>
-              <span>Cookie Policy</span>
-            </div>
           </div>
         </div>
       </div>
@@ -136,10 +76,14 @@ const Footer = () => {
         }
 
         .footer-content {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          display: flex;
+          flex-direction: row;
           gap: 2rem;
-          padding: 3rem 0;
+          padding: 1.5rem 0;
+        }
+
+        .footer-section {
+          flex: 1;
         }
 
         .footer-section h3,
@@ -215,7 +159,7 @@ const Footer = () => {
         .contact-info {
           display: flex;
           flex-direction: column;
-          gap: 1rem;
+          gap: 0.5rem;
         }
 
         .contact-item {
@@ -290,7 +234,7 @@ const Footer = () => {
 
         .footer-bottom {
           border-top: 1px solid rgba(255, 255, 255, 0.1);
-          padding: 1.5rem 0;
+          padding: 1rem 0;
         }
 
         .footer-bottom-content {

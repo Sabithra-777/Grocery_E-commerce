@@ -25,7 +25,7 @@ const ProductCard = ({ product }) => {
 
     setIsAdding(true);
     await new Promise((resolve) => setTimeout(resolve, 300));
-    addToCart(product);
+    const added = addToCart(product);
     setIsAdding(false);
   };
 
@@ -55,7 +55,13 @@ const ProductCard = ({ product }) => {
 
           <div className="product-info">
             <h3 className="product-name">{product.name}</h3>
-            <p className="product-weight">Stock: {product.stock}</p>
+            <p
+              className={`product-stock ${
+                product.stock <= 0 ? "out-of-stock-text" : ""
+              }`}
+            >
+              {product.stock <= 0 ? "Out of Stock" : `Stock: ${product.stock}`}
+            </p>
 
             <div className="product-pricing">
               <span className="offer-price">

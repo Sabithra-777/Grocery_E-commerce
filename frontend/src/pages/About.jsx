@@ -1,3 +1,5 @@
+import Footer from "../components/Footer";
+
 const About = () => {
   return (
     <div className="about-page">
@@ -5,8 +7,8 @@ const About = () => {
         <h1 className="page-title">About Us</h1>
 
         <p className="intro">
-          Welcome to <strong>GroceryMart Groceries</strong> – your trusted online
-          grocery delivery platform.
+          Welcome to <strong>GroceryMart Groceries</strong> – your trusted
+          online grocery delivery platform.
         </p>
 
         <div className="about-grid">

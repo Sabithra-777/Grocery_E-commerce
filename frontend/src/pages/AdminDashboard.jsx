@@ -47,7 +47,7 @@ const AdminDashboard = () => {
     setLoading(true);
     try {
       const data = await getProducts();
-      setProducts(data);
+      setProducts(data.products || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -89,7 +89,7 @@ const AdminDashboard = () => {
       });
       fetchProducts();
     } catch (error) {
-      alert("Error adding product ❌",error);
+      alert("Error adding product ❌", error);
     }
   };
 
@@ -126,7 +126,7 @@ const AdminDashboard = () => {
       });
       fetchProducts();
     } catch (error) {
-      alert("Error updating product ❌",error);
+      alert("Error updating product ❌", error);
     }
   };
 
@@ -137,7 +137,7 @@ const AdminDashboard = () => {
         alert("Product deleted successfully ✅");
         fetchProducts();
       } catch (error) {
-        alert("Error deleting product ❌",error);
+        alert("Error deleting product ❌", error);
       }
     }
   };
@@ -206,8 +206,13 @@ const AdminDashboard = () => {
                 placeholder="Price"
                 value={newProduct.price}
                 onChange={(e) =>
-                  setNewProduct({ ...newProduct, price: e.target.value })
+                  setNewProduct({
+                    ...newProduct,
+                    price: Math.max(0, parseFloat(e.target.value) || 0),
+                  })
                 }
+                min="0"
+                step="0.01"
                 required
               />
 
@@ -266,8 +271,13 @@ const AdminDashboard = () => {
                   placeholder="Price"
                   value={editForm.price}
                   onChange={(e) =>
-                    setEditForm({ ...editForm, price: e.target.value })
+                    setEditForm({
+                      ...editForm,
+                      price: Math.max(0, parseFloat(e.target.value) || 0),
+                    })
                   }
+                  min="0"
+                  step="0.01"
                   required
                 />
                 <input
@@ -283,8 +293,12 @@ const AdminDashboard = () => {
                   placeholder="Stock"
                   value={editForm.stock}
                   onChange={(e) =>
-                    setEditForm({ ...editForm, stock: e.target.value })
+                    setEditForm({
+                      ...editForm,
+                      stock: Math.max(0, parseInt(e.target.value) || 0),
+                    })
                   }
+                  min="0"
                   required
                 />
                 <textarea

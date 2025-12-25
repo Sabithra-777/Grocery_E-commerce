@@ -4,12 +4,6 @@ import { getProducts } from "../services/api";
 import ProductCard from "../components/ProductCard";
 
 const Products = () => {
-  const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [sortBy, setSortBy] = useState("name");
   const [searchParams] = useSearchParams();
 
   const categories = [
@@ -21,22 +15,48 @@ const Products = () => {
     "beverages",
   ];
 
-  useEffect(() => {
-    fetchProducts();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(() => {
     const category = searchParams.get("category");
-    if (category) {
+    return category && categories.includes(category) ? category : "all";
+  });
+  const [sortBy, setSortBy] = useState("name");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState(null);
+
+  useEffect(() => {
+    const category = searchParams.get("category");
+    if (category && categories.includes(category)) {
       setSelectedCategory(category);
+    } else {
+      setSelectedCategory("all");
     }
   }, [searchParams]);
 
   useEffect(() => {
-    filterAndSortProducts();
-  }, [products, searchTerm, selectedCategory, sortBy]);
+    fetchProducts();
+  }, [searchTerm, selectedCategory, sortBy, currentPage]);
 
   const fetchProducts = async () => {
     try {
-      const data = await getProducts();
-      setProducts(data);
+      setLoading(true);
+      const params = {
+        page: currentPage,
+        limit: 12,
+        category: selectedCategory !== "all" ? selectedCategory : undefined,
+        search: searchTerm || undefined,
+        sortBy,
+      };
+      console.log("Fetching products with params:", params);
+      console.log("Selected category:", selectedCategory);
+      const data = await getProducts(params);
+      console.log("API response:", data);
+      console.log("Products in response:", data.products?.length || 0);
+      setProducts(data.products || []);
+      setPagination(data.pagination);
+      console.log("Products set:", data.products?.length || 0);
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
@@ -44,47 +64,15 @@ const Products = () => {
     }
   };
 
-  const filterAndSortProducts = () => {
-    let filtered = products;
-
-    // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (product) =>
-          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.category.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Filter by category
-    if (selectedCategory !== "all") {
-      filtered = filtered.filter(
-        (product) =>
-          product.category.toLowerCase() === selectedCategory.toLowerCase()
-      );
-    }
-
-    // Sort products
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "price-low":
-          return (a.offerPrice || a.price) - (b.offerPrice || b.price);
-        case "price-high":
-          return (b.offerPrice || b.price) - (a.offerPrice || a.price);
-        case "name":
-          return a.name.localeCompare(b.name);
-        default:
-          return 0;
-      }
-    });
-
-    setFilteredProducts(filtered);
-  };
-
   const clearFilters = () => {
     setSearchTerm("");
     setSelectedCategory("all");
     setSortBy("name");
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   if (loading) {
@@ -161,14 +149,16 @@ const Products = () => {
         {/* Results */}
         <div className="results-info">
           <p>
-            Showing {filteredProducts.length} of {products.length} products
+            Showing {products.length} products
+            {pagination &&
+              ` (Page ${pagination.currentPage} of ${pagination.totalPages})`}
           </p>
         </div>
 
         {/* Products Grid */}
-        {filteredProducts.length > 0 ? (
+        {products.length > 0 ? (
           <div className="products-grid">
-            {filteredProducts.map((product) => (
+            {products.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
           </div>
@@ -179,6 +169,39 @@ const Products = () => {
             <p>Try adjusting your search or filters</p>
             <button onClick={clearFilters} className="btn btn-primary">
               Clear Filters
+            </button>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {pagination && pagination.totalPages > 1 && (
+          <div className="pagination">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={!pagination.hasPrevPage}
+              className="pagination-btn"
+            >
+              Previous
+            </button>
+            {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(
+              (page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`pagination-btn ${
+                    page === pagination.currentPage ? "active" : ""
+                  }`}
+                >
+                  {page}
+                </button>
+              )
+            )}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={!pagination.hasNextPage}
+              className="pagination-btn"
+            >
+              Next
             </button>
           </div>
         )}
@@ -357,6 +380,55 @@ const Products = () => {
           .products-grid {
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
+          }
+        }
+
+        .pagination {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 0.5rem;
+          margin-top: 2rem;
+          padding: 1rem;
+        }
+
+        .pagination-btn {
+          padding: 8px 12px;
+          border: 2px solid #e1e5e9;
+          background: white;
+          color: #333;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-size: 0.9rem;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+          background: #667eea;
+          color: white;
+          border-color: #667eea;
+        }
+
+        .pagination-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+          background: #667eea;
+          color: white;
+          border-color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+          .pagination {
+            flex-wrap: wrap;
+            gap: 0.25rem;
+          }
+
+          .pagination-btn {
+            padding: 6px 10px;
+            font-size: 0.8rem;
           }
         }
 

@@ -122,6 +122,14 @@ const Home = () => {
               <h3>Grains & Cereals</h3>
               <p>Healthy & wholesome</p>
             </Link>
+            <Link
+              to="/products?category=beverages"
+              className="category-card beverages"
+            >
+              <div className="category-icon">🥤</div>
+              <h3>Beverages</h3>
+              <p>Refreshing drinks</p>
+            </Link>
           </div>
         </div>
       </section>
@@ -339,6 +347,7 @@ const Home = () => {
           transition: all 0.3s ease;
           position: relative;
           overflow: hidden;
+          cursor: pointer;
         }
 
         .category-card::before {

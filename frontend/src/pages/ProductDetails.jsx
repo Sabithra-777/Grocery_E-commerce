@@ -14,6 +14,7 @@ const ProductDetails = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [addedCount, setAddedCount] = useState(0);
 
   // Use proxy for external images to avoid CORS/ORB issues
   const getProxiedImageUrl = (imageUrl) => {
@@ -47,17 +48,28 @@ const ProductDetails = () => {
     setIsAdding(true);
     await new Promise((resolve) => setTimeout(resolve, 500));
 
+    let addedCount = 0;
     for (let i = 0; i < quantity; i++) {
-      addToCart(product);
+      const added = addToCart(product);
+      if (added) {
+        addedCount++;
+      } else {
+        break; // Stop if we can't add more
+      }
     }
 
     setIsAdding(false);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+    if (addedCount > 0) {
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    }
   };
 
   const incrementQuantity = () => {
-    setQuantity((prev) => prev + 1);
+    setQuantity((prev) => {
+      const maxQuantity = product?.stock || 999;
+      return prev < maxQuantity ? prev + 1 : prev;
+    });
   };
 
   const decrementQuantity = () => {
@@ -212,12 +224,18 @@ const ProductDetails = () => {
                 <button
                   onClick={decrementQuantity}
                   className="quantity-btn"
-                  disabled={quantity <= 1}
+                  disabled={quantity <= 1 || product?.stock <= 0}
                 >
                   -
                 </button>
                 <span className="quantity-display">{quantity}</span>
-                <button onClick={incrementQuantity} className="quantity-btn">
+                <button
+                  onClick={incrementQuantity}
+                  className="quantity-btn"
+                  disabled={
+                    quantity >= (product?.stock || 999) || product?.stock <= 0
+                  }
+                >
                   +
                 </button>
               </div>
@@ -228,10 +246,12 @@ const ProductDetails = () => {
                 onClick={handleAddToCart}
                 className={`btn btn-primary add-to-cart ${
                   isAdding ? "loading" : ""
-                }`}
-                disabled={isAdding}
+                } ${product?.stock <= 0 ? "out-of-stock" : ""}`}
+                disabled={isAdding || product?.stock <= 0}
               >
-                {isAdding ? (
+                {product?.stock <= 0 ? (
+                  "Out of Stock"
+                ) : isAdding ? (
                   <>
                     <span className="loading-spinner"></span>
                     Adding...
@@ -245,7 +265,10 @@ const ProductDetails = () => {
               </button>
 
               <button
-                className="btn btn-primary buy-now"
+                className={`btn btn-primary buy-now ${
+                  product?.stock <= 0 ? "out-of-stock" : ""
+                }`}
+                disabled={product?.stock <= 0}
                 onClick={() => {
                   for (let i = 0; i < quantity; i++) {
                     addToCart(product);
@@ -254,7 +277,7 @@ const ProductDetails = () => {
                 }}
               >
                 <span className="buy-icon">⚡</span>
-                Buy Now
+                {product?.stock <= 0 ? "Out of Stock" : "Buy Now"}
               </button>
             </div>
 
@@ -263,7 +286,10 @@ const ProductDetails = () => {
                 <strong>Category:</strong> {product.category}
               </div>
               <div className="meta-item">
-                <strong>Stock:</strong> {product.stock || "In Stock"}
+                <strong>Stock:</strong>{" "}
+                {product.stock > 0
+                  ? `${product.stock} In Stock`
+                  : "Out of Stock"}
               </div>
               <div className="meta-item">
                 <strong>SKU:</strong> {product._id.slice(-8).toUpperCase()}
@@ -275,7 +301,7 @@ const ProductDetails = () => {
 
       {showToast && (
         <div className="toast success">
-          ✅ {quantity} x {product.name} added to cart!
+          ✅ {addedCount} x {product.name} added to cart!
         </div>
       )}
 
@@ -553,6 +579,14 @@ const ProductDetails = () => {
 
         .add-to-cart.loading {
           opacity: 0.8;
+          cursor: not-allowed;
+        }
+
+        .add-to-cart.out-of-stock,
+        .buy-now.out-of-stock {
+          background: #dc3545;
+          border-color: #dc3545;
+          color: white;
           cursor: not-allowed;
         }
 

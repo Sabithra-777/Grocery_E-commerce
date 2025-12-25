@@ -204,15 +204,18 @@ const Navbar = () => {
         }
 
         .btn-outline {
-          background: white;
-          color: #2c3e50;
-          border: none;
+          background: transparent;
+          color: white;
+          border: 2px solid white;
           padding: 8px 16px;
           font-size: 0.9rem;
+          font-weight: 500;
+          transition: all 0.3s ease;
         }
 
         .btn-outline:hover {
-          background: #f0f0f0;
+          background: white;
+          color: #2c3e50;
         }
 
         .mobile-menu-btn {
